@@ -282,3 +282,6 @@ pre code.hljs, pre code {
   .tabs { top: 57px; }
   .sticky-progress { position: static; }
 }
+
+/* زرار النسخ ميغطيش أول سطر في الكود */
+pre code.hljs, pre code { padding-top: 34px; }
