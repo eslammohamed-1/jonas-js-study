@@ -1,0 +1,5 @@
+.DS_Store
+._*
+transcript.md
+**/transcript.md
+node_modules/

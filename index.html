@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>مذاكرة جوناس JS — إسلام</title>
+  <meta name="description" content="مذاكرتي لكورس The Complete JavaScript Course بتاع Jonas Schmedtmann: نوتات، شرح، تدريبات، وخطة." />
+  <meta name="theme-color" content="#f7c948" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%23f7df1e'/><text x='50' y='70' font-size='52' text-anchor='middle' font-family='Arial' font-weight='700' fill='%23222'>JS</text></svg>" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link id="hljs-theme" rel="stylesheet" href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/github.min.css" />
+  <link rel="stylesheet" href="css/style.css" />
+  <script>
+    // نطبّق الثيم قبل الرسم عشان الشاشة متومضش
+    (function () {
+      var t = localStorage.getItem('jjs-theme');
+      if (!t) t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      document.documentElement.dataset.theme = t;
+    })();
+  </script>
+</head>
+<body>
+  <header class="topbar">
+    <a href="#/" class="brand"><span class="logo">JS</span><span>مذاكرة جوناس</span></a>
+    <nav class="nav">
+      <a href="#/" data-nav="home">الرئيسية</a>
+      <a href="#/plan" data-nav="plan">الخطة</a>
+      <button id="themeBtn" class="icon-btn" title="تغيير الثيم" aria-label="تغيير الثيم">🌙</button>
+    </nav>
+  </header>
+
+  <main id="app" class="container" aria-live="polite">
+    <p class="loading">بيحمّل…</p>
+  </main>
+
+  <footer class="footer container">
+    <p>
+      مذاكرتي الشخصية لكورس
+      <a href="https://www.udemy.com/course/the-complete-javascript-course/" target="_blank" rel="noopener">The Complete JavaScript Course</a>
+      بتاع <a href="https://github.com/jonasschmedtmann" target="_blank" rel="noopener">Jonas Schmedtmann</a>.
+      النوتات والشرح والتدريبات مكتوبة بأسلوبي، والكورس نفسه وحقوقه لجوناس وUdemy.
+    </p>
+    <p class="muted small">التقدم محفوظ على الجهاز ده بس (localStorage) · <a href="#/progress">نقل التقدم لجهاز تاني</a></p>
+  </footer>
+
+  <div id="toast" class="toast" role="status"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
