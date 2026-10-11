@@ -1,4 +1,4 @@
-# 131 — CHALLENGE #4 (underscore_case → camelCase)
+# 131 — CHALLENGE #4 (underscore_case to camelCase)
 
 مختلف عن اللي قبله، و**صعب عن قصد**. لو اتزنقت متتعصبش — اتفرج على الحل وقِف وكمّل.
 
@@ -11,7 +11,7 @@ document.body.append(document.createElement('button'));
 ```
 
 Test data (أحطها في الـ textarea):
-```
+```text
 underscore_case
  first_name
 Some_Variable
@@ -19,7 +19,7 @@ Some_Variable
 delayed_departure
 ```
 الـ output المطلوب — 5 `console.log` منفصلين:
-```
+```text
 underscoreCase      ✅
 firstName           ✅✅
 someVariable        ✅✅✅

@@ -1,4 +1,4 @@
-# 127 — CHALLENGE #3 (Football Betting App — الـ events)
+# 127 — CHALLENGE #3 (Football Betting App: Game Events)
 
 ## الداتا
 Map فيها أحداث الماتش: الـ **key = الدقيقة**، الـ **value = الحدث** (جول، تبديل...).

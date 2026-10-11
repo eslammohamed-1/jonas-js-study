@@ -1,4 +1,4 @@
-# 116 — CHALLENGE #1 (Football Betting App ⚽)
+# 116 — CHALLENGE #1 (Football Betting App)
 
 ## الداتا
 object جاي من web service عن ماتش (موجود في الـ Challenge PDF / الـ final code):

@@ -1,4 +1,4 @@
-# 121 — CHALLENGE #2 (Football Betting App — كمّلة)
+# 121 — CHALLENGE #2 (Football Betting App, Part 2)
 
 نفس الـ `game` object بتاع Challenge #1.
 جوناس قال إنه **صعب شوية عن قصد** — "وإلا كان اسمه coding copy and paste". جرّب الـ problem solving framework، وGoogle وMDN مسموحين.

@@ -29,7 +29,7 @@ const [pizza, , risotto, ...otherFood] = [
   ...restaurant.starterMenu,
 ];
 console.log(pizza, risotto, otherFood);
-// Pizza Risotto [ ...كل الباقي ]
+// Pizza Risotto ← وبعدهم array فيها كل الباقي
 ```
 - الـ hole (`, ,`) اللي سبته **مش بيدخل** في otherFood.
 - rest بيلم اللي **بعد آخر متغير** بس.
