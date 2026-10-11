@@ -3,6 +3,7 @@
 //  1) اعمل فولدر جديد في lectures/ بنفس التسمية (مثلًا 112-Rest-Pattern)
 //     وحط فيه notes.md و explanation.md و exercises.md و solutions.md
 //  2) في SECTION9 تحت، حط slug للمحاضرة دي.
+//     (محاضرة من سكشن تاني: ضيفها في SECTIONS، ولو فيها نوتات بس استخدم notesOnly)
 // ============================================================
 
 window.COURSE = {
@@ -40,6 +41,51 @@ window.SECTION9 = [
   { n: 130, title: 'Working With Strings - Part 3' },
   { n: 131, title: 'Coding Challenge #4', challenge: true },
   { n: 132, title: 'String Methods Practice' },
+];
+
+// سكاشن الأساسيات: نوتات بس (معمولة من الهاندبوكس بتاعتي على Drive)
+// files = الملفات الموجودة للمحاضرة (لو مش مكتوبة يبقى الأربعة)
+// transcript: false = مفيش ترانسكريبت محفوظ عندي على الجهاز
+const notesOnly = (n, title, slug) => ({ n, title, slug, files: ['notes'], transcript: false });
+
+window.SECTIONS = [
+  {
+    id: 's2',
+    name: 'Section 2 — JavaScript Fundamentals – Part 1',
+    short: 'Fundamentals 1',
+    lectures: [
+      notesOnly(9, 'Values and Variables', '009-Values-and-Variables'),
+      notesOnly(11, 'Data Types', '011-Data-Types'),
+      notesOnly(13, 'Basic Operators', '013-Basic-Operators'),
+      notesOnly(18, 'Taking Decisions: if / else Statements', '018-Taking-Decisions-if-else'),
+      notesOnly(20, 'Type Conversion and Coercion', '020-Type-Conversion-and-Coercion'),
+      notesOnly(21, 'Truthy and Falsy Values', '021-Truthy-and-Falsy-Values'),
+    ],
+  },
+  {
+    id: 's3',
+    name: 'Section 3 — JavaScript Fundamentals – Part 2',
+    short: 'Fundamentals 2',
+    lectures: [
+      notesOnly(33, 'Activating Strict Mode', '033-Activating-Strict-Mode'),
+      notesOnly(34, 'Functions', '034-Functions'),
+      notesOnly(35, 'Function Declarations vs. Expressions', '035-Function-Declarations-vs-Expressions'),
+      notesOnly(36, 'Arrow Functions', '036-Arrow-Functions'),
+      notesOnly(37, 'Functions Calling Other Functions', '037-Functions-Calling-Other-Functions'),
+      notesOnly(40, 'Introduction to Arrays', '040-Introduction-to-Arrays'),
+      notesOnly(41, 'Basic Array Operations (Methods)', '041-Basic-Array-Operations'),
+      notesOnly(43, 'Introduction to Objects', '043-Introduction-to-Objects'),
+      notesOnly(44, 'Dot vs. Bracket Notation', '044-Dot-vs-Bracket-Notation'),
+      notesOnly(45, 'Object Methods', '045-Object-Methods'),
+      notesOnly(47, 'Iteration: The for Loop', '047-The-for-Loop'),
+    ],
+  },
+  {
+    id: 's9',
+    name: 'Section 9 — Data Structures, Modern Operators and Strings',
+    short: 'Section 9',
+    lectures: window.SECTION9,
+  },
 ];
 
 // المحاضرات اللي خلصت فعلًا (بتتعلّم done أول مرة تفتح الموقع)

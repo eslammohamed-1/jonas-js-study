@@ -8,8 +8,17 @@
   const esc = (s) =>
     String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const S9 = window.SECTION9;
-  const byN = Object.fromEntries(S9.map((l) => [l.n, l]));
-  const withMaterial = S9.filter((l) => l.slug);
+  // كل السكاشن اللي ليها محاضرات على الموقع (لو SECTIONS مش موجودة، Section 9 بس)
+  const SECTIONS = window.SECTIONS || [{ id: 's9', name: 'Section 9', short: 'Section 9', lectures: S9 }];
+  SECTIONS.forEach((sec) => sec.lectures.forEach((l) => (l.sec = sec)));
+  const ALL = SECTIONS.flatMap((sec) => sec.lectures).sort((a, b) => a.n - b.n);
+  const byN = Object.fromEntries(ALL.map((l) => [l.n, l]));
+  const withMaterial = ALL.filter((l) => l.slug);
+  // الملفات الموجودة لكل محاضرة (الافتراضي: الأربعة)
+  const DEFAULT_FILES = ['notes', 'explanation', 'exercises', 'solutions'];
+  const filesOf = (l) => l.files || DEFAULT_FILES;
+  const hasEx = (l) => filesOf(l).includes('exercises');
+  const tabsOf = (l) => TABS.filter((t) => (t.id === 'transcript' ? l.transcript !== false : filesOf(l).includes(t.id)));
 
   const TABS = [
     { id: 'notes', label: 'نوتات', icon: '📝' },
@@ -180,8 +189,13 @@
     document.title = 'مذاكرة جوناس JS';
     const done = s9Done();
     const total = S9.length;
-    const exTotalDone = withMaterial.reduce((a, l) => a + exDoneCount(l.n), 0);
-    const exTotalAll = withMaterial.reduce((a, l) => a + (state.exTotal[l.n] || 8), 0);
+    const withEx = withMaterial.filter(hasEx);
+    const exTotalDone = withEx.reduce((a, l) => a + exDoneCount(l.n), 0);
+    const exTotalAll = withEx.reduce((a, l) => a + (state.exTotal[l.n] || 8), 0);
+    // Section 9 الأول (الشغال عليه دلوقتي)، وبعده الباقي
+    const homeSections = [...SECTIONS]
+      .filter((sec) => sec.lectures.some((l) => l.slug))
+      .sort((a, b) => (b.id === 's9') - (a.id === 's9'));
     const ns = nextSitting();
     const upcoming = S9.filter((l) => !isDone(l.n)).slice(0, 6);
 
@@ -210,23 +224,39 @@
           : `<a class="card next-card" href="#/plan"><div class="tag">🎉</div><h2>خلصت Section 9!</h2><span class="link">شوف اللي بعده في الخطة ←</span></a>`
       }
 
-      <h2 class="section-title">المحاضرات اللي ليها ماتريال</h2>
+      ${homeSections
+        .map(
+          (sec) => `<h2 class="section-title">${sec.id === 's9' ? 'المحاضرات اللي ليها ماتريال' : `<bdi dir="ltr">${esc(sec.name)}</bdi>`}${
+            sec.id === 's9' ? '' : ' <span class="muted small">· نوتات للمراجعة</span>'
+          }</h2>
       <div class="grid">
-        ${withMaterial
+        ${sec.lectures
+          .filter((l) => l.slug)
           .map((l) => {
+            const status = isDone(l.n) ? '✅ خلصتها' : '⏳ لسه';
+            if (!hasEx(l))
+              return `<a class="card lec-card ${isDone(l.n) ? 'is-done' : ''}" href="#/lecture/${l.n}">
+              <div class="lec-num">${l.n}</div>
+              <div class="lec-body">
+                <h3>${esc(l.title)}</h3>
+                <div class="muted small">${status} · 📝 نوتات</div>
+              </div>
+            </a>`;
             const exd = exDoneCount(l.n);
             const ext = state.exTotal[l.n] || 8;
             return `<a class="card lec-card ${isDone(l.n) ? 'is-done' : ''}" href="#/lecture/${l.n}">
               <div class="lec-num">${l.n}</div>
               <div class="lec-body">
                 <h3>${esc(l.title)}</h3>
-                <div class="muted small">${isDone(l.n) ? '✅ خلصتها' : '⏳ لسه'} · تمارين ${exd}/${ext}</div>
+                <div class="muted small">${status} · تمارين ${exd}/${ext}</div>
                 ${progressBar(exd, ext)}
               </div>
             </a>`;
           })
           .join('')}
-      </div>
+      </div>`
+        )
+        .join('')}
 
       <h2 class="section-title">الجاي في Section 9</h2>
       <div class="card">
@@ -405,12 +435,16 @@
     }
     document.title = `${lec.n} — ${lec.title}`;
     if (!TABS.some((t) => t.id === tab)) tab = 'notes';
+    const tabs = tabsOf(lec);
     const idx = withMaterial.indexOf(lec);
-    const prev = withMaterial[idx - 1];
-    const next = withMaterial[idx + 1];
+    const prev = idx >= 0 ? withMaterial[idx - 1] : undefined;
+    const next = idx >= 0 ? withMaterial[idx + 1] : undefined;
+    // لو التاب مش موجود في المحاضرة اللي بعدها/قبلها، افتح النوتات
+    const tabFor = (l) => (tabsOf(l).some((t) => t.id === tab) ? tab : 'notes');
+    const secName = lec.sec ? lec.sec.short || lec.sec.name : 'Section 9';
 
     app.innerHTML = `
-      <nav class="crumbs"><a href="#/">الرئيسية</a> ‹ Section 9 ‹ محاضرة ${lec.n}</nav>
+      <nav class="crumbs"><a href="#/">الرئيسية</a> ‹ ${esc(secName)} ‹ محاضرة ${lec.n}</nav>
       <section class="lec-head">
         <div>
           <div class="muted small">محاضرة ${lec.n}</div>
@@ -421,7 +455,7 @@
       ${
         lec.slug
           ? `<nav class="tabs" role="tablist">
-              ${TABS.map(
+              ${tabs.map(
                 (t) =>
                   `<a role="tab" href="#/lecture/${lec.n}/${t.id}" class="${t.id === tab ? 'active' : ''}" aria-selected="${t.id === tab}"><span>${t.icon}</span> ${t.label}</a>`
               ).join('')}
@@ -430,8 +464,8 @@
           : `<div class="card"><p>المحاضرة دي لسه مفيهاش نوتات ولا تدريبات. أول ما تخلصها وتبعت الترانسكريبت هتتضاف هنا.</p></div>`
       }
       <nav class="pager">
-        ${prev ? `<a class="btn ghost" href="#/lecture/${prev.n}/${tab}">→ ${prev.n}</a>` : '<span></span>'}
-        ${next ? `<a class="btn ghost" href="#/lecture/${next.n}/${tab}">${next.n} ←</a>` : '<span></span>'}
+        ${prev ? `<a class="btn ghost" href="#/lecture/${prev.n}/${tabFor(prev)}">→ ${prev.n}</a>` : '<span></span>'}
+        ${next ? `<a class="btn ghost" href="#/lecture/${next.n}/${tabFor(next)}">${next.n} ←</a>` : '<span></span>'}
       </nav>`;
 
     $('#doneBtn').onclick = () => {
@@ -441,6 +475,14 @@
     };
     if (!lec.slug) return;
     const box = $('#tabContent');
+    if (!tabs.some((t) => t.id === tab)) {
+      const label = (TABS.find((t) => t.id === tab) || {}).label || '';
+      box.innerHTML =
+        tab === 'transcript'
+          ? `<div class="card notice"><h3>🎧 مفيش ترانسكريبت محفوظ للمحاضرة دي</h3><p>لو عايزه، افتح المحاضرة على <a href="${window.COURSE.udemy}" target="_blank" rel="noopener">Udemy</a> وشغّل الـ Transcript من تحت الفيديو.</p></div>`
+          : `<div class="card notice center"><h3>⏳ لسه هتتضاف</h3><p>${esc(label)} المحاضرة دي لسه متعملتش. دلوقتي فيه <a href="#/lecture/${lec.n}/notes">النوتات</a>.</p></div>`;
+      return;
+    }
     const fail = (e) => {
       box.innerHTML = `<div class="card"><p>مقدرتش أحمّل الملف 😕</p><p class="muted small" dir="ltr">${esc(e.message)}</p></div>`;
     };
