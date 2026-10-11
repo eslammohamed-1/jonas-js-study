@@ -192,17 +192,16 @@
     const withEx = withMaterial.filter(hasEx);
     const exTotalDone = withEx.reduce((a, l) => a + exDoneCount(l.n), 0);
     const exTotalAll = withEx.reduce((a, l) => a + (state.exTotal[l.n] || 8), 0);
-    // Section 9 الأول (الشغال عليه دلوقتي)، وبعده الباقي
-    const homeSections = [...SECTIONS]
-      .filter((sec) => sec.lectures.some((l) => l.slug))
-      .sort((a, b) => (b.id === 's9') - (a.id === 's9'));
+    // السكاشن بالترتيب (1 → 9)، وSection 9 مفتوحة لوحدها (أو اللي إنت فاتحها آخر مرة)
+    const homeSections = SECTIONS.filter((sec) => sec.lectures.some((l) => l.slug));
+    const openSecs = loadOpenSecs();
     const ns = nextSitting();
     const upcoming = S9.filter((l) => !isDone(l.n)).slice(0, 6);
 
     app.innerHTML = `
       <section class="hero">
         <h1>أهلًا يا إسلام 👋</h1>
-        <p class="muted">كورس جوناس JavaScript — كل محاضرة فيها النوتات (وبعضها فيه شرح وتدريبات)، والخطة بتاعتك جنبها.</p>
+        <p class="muted">كورس جوناس JavaScript — نوتات كل محاضرات السكاشن من 1 لـ 9 (وبعضها فيه شرح وتدريبات)، والخطة بتاعتك جنبها.</p>
         <div class="stats">
           <div class="stat"><b>${done}/${total}</b><span>محاضرات Section 9</span>${progressBar(done, total)}</div>
           <div class="stat"><b>${exTotalDone}/${exTotalAll}</b><span>تمارين خلصتها</span>${progressBar(exTotalDone, exTotalAll)}</div>
@@ -224,27 +223,40 @@
           : `<a class="card next-card" href="#/plan"><div class="tag">🎉</div><h2>خلصت Section 9!</h2><span class="link">شوف اللي بعده في الخطة ←</span></a>`
       }
 
+      <h2 class="section-title">كل المحاضرات <span class="muted small">· ${withMaterial.length} محاضرة في ${homeSections.length} سكاشن</span></h2>
+      <div class="lec-tools">
+        <input id="lecSearch" type="search" placeholder="دوّر برقم أو اسم المحاضرة… (مثلًا 98 أو this)" autocomplete="off" aria-label="دوّر على محاضرة" />
+        <button class="btn ghost" id="expandAll" type="button">افتح الكل</button>
+        <button class="btn ghost" id="collapseAll" type="button">اقفل الكل</button>
+      </div>
+      <p class="muted small" id="searchInfo" hidden></p>
+      <div id="secList">
       ${homeSections
-        .map(
-          (sec) => `<h2 class="section-title">${sec.id === 's9' ? 'المحاضرات اللي ليها ماتريال' : `<bdi dir="ltr">${esc(sec.name)}</bdi>`}${
-            sec.id === 's9' ? '' : ' <span class="muted small">· نوتات للمراجعة</span>'
-          }</h2>
-      <div class="grid">
-        ${sec.lectures
-          .filter((l) => l.slug)
+        .map((sec) => {
+          const ls = sec.lectures.filter((l) => l.slug);
+          const d = ls.filter((l) => isDone(l.n)).length;
+          const range = `<bdi dir="ltr">${ls[0].n}–${ls[ls.length - 1].n}</bdi>`;
+          return `<details class="sec-block" data-sec="${sec.id}" ${openSecs[sec.id] ? 'open' : ''}>
+        <summary>
+          <span class="sec-name"><bdi dir="ltr">${esc(sec.name)}</bdi></span>
+          <span class="sec-meta muted small">محاضرات ${range} · ${ls.length} محاضرة · خلصت ${d}</span>
+        </summary>
+        <div class="grid">
+        ${ls
           .map((l) => {
             const status = isDone(l.n) ? '✅ خلصتها' : '⏳ لسه';
+            const key = esc(`${l.n} ${l.title}`.toLowerCase());
             if (!hasEx(l))
-              return `<a class="card lec-card ${isDone(l.n) ? 'is-done' : ''}" href="#/lecture/${l.n}">
+              return `<a class="card lec-card ${isDone(l.n) ? 'is-done' : ''}" data-key="${key}" href="#/lecture/${l.n}">
               <div class="lec-num">${l.n}</div>
               <div class="lec-body">
                 <h3>${esc(l.title)}</h3>
-                <div class="muted small">${status} · 📝 نوتات</div>
+                <div class="muted small">${status} · 📝 نوتات${l.challenge ? ' <span class="pill">Challenge</span>' : ''}</div>
               </div>
             </a>`;
             const exd = exDoneCount(l.n);
             const ext = state.exTotal[l.n] || 8;
-            return `<a class="card lec-card ${isDone(l.n) ? 'is-done' : ''}" href="#/lecture/${l.n}">
+            return `<a class="card lec-card ${isDone(l.n) ? 'is-done' : ''}" data-key="${key}" href="#/lecture/${l.n}">
               <div class="lec-num">${l.n}</div>
               <div class="lec-body">
                 <h3>${esc(l.title)}</h3>
@@ -254,9 +266,11 @@
             </a>`;
           })
           .join('')}
-      </div>`
-        )
+        </div>
+      </details>`;
+        })
         .join('')}
+      </div>
 
       <h2 class="section-title">الجاي في Section 9</h2>
       <div class="card">
@@ -271,6 +285,84 @@
         <p class="muted small">نوتات Section 9 كلها موجودة (108–132). الشرح والتدريبات بيتضافوا بعد ما تخلص المحاضرة.</p>
       </div>
     `;
+    wireHome();
+  }
+
+
+  // ============ فتح/قفل السكاشن + البحث في الرئيسية ============
+  const OPEN_KEY = 'jjs-open-secs';
+  function loadOpenSecs() {
+    try {
+      const o = JSON.parse(localStorage.getItem(OPEN_KEY));
+      if (o && typeof o === 'object') return o;
+    } catch (e) {}
+    return { s9: true };
+  }
+  function saveOpenSecs() {
+    const o = {};
+    $$('details.sec-block', app).forEach((d) => d.open && (o[d.dataset.sec] = true));
+    try {
+      localStorage.setItem(OPEN_KEY, JSON.stringify(o));
+    } catch (e) {}
+  }
+  function wireHome() {
+    const blocks = $$('details.sec-block', app);
+    const input = $('#lecSearch', app);
+    const info = $('#searchInfo', app);
+    let searching = false;
+    blocks.forEach((d) => d.addEventListener('toggle', () => !searching && saveOpenSecs()));
+    $('#expandAll', app).onclick = () => {
+      blocks.forEach((d) => (d.open = true));
+      if (!searching) saveOpenSecs();
+    };
+    $('#collapseAll', app).onclick = () => {
+      blocks.forEach((d) => (d.open = false));
+      if (!searching) saveOpenSecs();
+    };
+    const saved = sessionStorage.getItem('jjs-search') || '';
+    const apply = () => {
+      const q = input.value.trim().toLowerCase();
+      sessionStorage.setItem('jjs-search', input.value);
+      if (!q) {
+        searching = false;
+        info.hidden = true;
+        $$('.lec-card', app).forEach((c) => (c.hidden = false));
+        blocks.forEach((d) => {
+          d.hidden = false;
+          d.open = !!loadOpenSecs()[d.dataset.sec];
+        });
+        return;
+      }
+      searching = true;
+      const words = q.split(/\s+/);
+      const isNum = /^\d+$/.test(q);
+      let hits = 0;
+      blocks.forEach((d) => {
+        let n = 0;
+        $$('.lec-card', d).forEach((c) => {
+          const key = c.dataset.key;
+          const ok = isNum ? key.split(' ')[0] === q || key.startsWith(q) : words.every((w) => key.includes(w));
+          c.hidden = !ok;
+          if (ok) n++;
+        });
+        d.hidden = !n;
+        d.open = !!n;
+        hits += n;
+      });
+      info.hidden = false;
+      info.textContent = hits ? `لقيت ${hits} محاضرة` : 'مفيش محاضرة بالاسم ده';
+    };
+    input.addEventListener('input', apply);
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        input.value = '';
+        apply();
+      }
+    });
+    if (saved) {
+      input.value = saved;
+      apply();
+    }
   }
 
   // ============ الخطة ============

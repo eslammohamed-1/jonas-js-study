@@ -135,6 +135,28 @@ h1, h2, h3 { line-height: 1.4; }
 .up-list li { padding: 6px 0; border-bottom: 1px dashed var(--border); direction: ltr; text-align: right; }
 .up-list li:last-child { border-bottom: 0; }
 
+
+/* ---------- home: sections (collapsible) + search ---------- */
+[hidden] { display: none !important; }
+.lec-tools { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin: 10px 0 6px; }
+.lec-tools input[type="search"] {
+  flex: 1 1 260px; min-width: 0; font: inherit; padding: 10px 14px; border-radius: 999px;
+  border: 1px solid var(--border); background: var(--card); color: var(--text); outline: none;
+}
+.lec-tools input[type="search"]:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+.sec-block { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); margin: 10px 0; box-shadow: var(--shadow); }
+.sec-block > summary {
+  list-style: none; cursor: pointer; padding: 14px 18px; display: flex; flex-wrap: wrap; gap: 4px 12px;
+  align-items: baseline; justify-content: space-between; user-select: none;
+}
+.sec-block > summary::-webkit-details-marker { display: none; }
+.sec-block > summary::before { content: '◂'; color: var(--muted); transition: transform 0.2s; display: inline-block; }
+.sec-block[open] > summary::before { transform: rotate(-90deg); }
+.sec-block[open] > summary { border-bottom: 1px solid var(--border); }
+.sec-name { font-weight: 700; flex: 1 1 auto; }
+.sec-block > .grid { padding: 14px; }
+.lec-card .pill { margin-inline-start: 4px; }
+
 /* ---------- plan ---------- */
 .week { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; margin-top: 10px; }
 .day {

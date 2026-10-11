@@ -1,51 +1,82 @@
 # 011 — Data Types
 
 ## الفكرة
-أي value في JS يا **object** يا **primitive**.
-فيه **7 primitive types**، وأهم 3 هستخدمهم طول الوقت: Number و String و Boolean.
-
-```js
-let me = { name: 'Jonas', age: 30 }; // object (هنتعلمه بعدين)
-
-let firstName = 'Jonas';  // primitive
-let age = 30;
-let isStudent = true;
-```
+كل value في JS يا **object** يا **primitive**. فيه 7 primitive types. والمحاضرة فيها كمان dynamic typing والـ comments والـ `typeof`.
 
 ## أهم الحاجات
+### object ولا primitive
+- الـ value بتبقى primitive لو هي مش object. الـ objects هنتعلمها بعدين، فدلوقتي نركّز على الـ primitives.
 
-### الـ 7 primitives
-| النوع | يعني | مثال |
-|---|---|---|
-| Number | أي رقم، صحيح أو عشري (كله floating point) | `23` = `23.0`، `9.99` |
-| String | نص بين `'…'` أو `"…"` | `'Jonas'` |
-| Boolean | `true` أو `false` بس | `true` |
-| Undefined | متغير اتعرّف ومتحطش فيه قيمة | `let children;` |
-| Null | فاضي بس **أنا** اللي حاطه عن قصد | `let color = null;` |
-| Symbol (ES2015) | قيمة فريدة مبتتغيرش | `Symbol('id')` |
-| BigInt (ES2020) | أرقام صحيحة أكبر من اللي Number يشيلها | `123n` |
+### الـ 7 Primitive Data Types
+1. **Number:** دايمًا floating point، يعني ليها decimals حتى لو مش باينة. `23` هي نفسها `23.0`. مفيش type منفصل للـ integers زي لغات تانية.
+2. **String:** sequence of characters، يعني text. لازم بين quotes، single أو double. من غيرها JS هتفتكره اسم variable.
+3. **Boolean:** `true` أو `false` بس. بنستخدمه عشان ناخد decisions.
+4. **Undefined:** الـ value اللي بياخدها variable اتعمل ولسه متحطش فيه قيمة، زي `let children;`. يعني empty value.
+5. **Null:** برضه empty value، بس بيتستخدم في ظروف مختلفة. التفاصيل بعدين.
+6. **Symbol (ES2015):** value فريدة ومينفعش تتغير. مش مفيدة لينا دلوقتي.
+7. **BigInt (ES2020):** للـ integers الكبيرة أوي اللي الـ Number ميعرفش يمثّلها.
 
-### typeof
-بيرجّع **string** فيه اسم النوع:
-```js
-typeof true;       // 'boolean'
-typeof 23;         // 'number'
-typeof 'Jonas';    // 'string'
-typeof undefined;  // 'undefined'
-typeof null;       // 'object' ← bug قديم ومش هيتصلح (legacy)
-```
+- أهم 3: Number وString وBoolean.
 
 ### Dynamic Typing
-النوع بتاع الـ **value** مش بتاع المتغير. مش بقول النوع وأنا بعرّف، وأقدر أحط في نفس المتغير نوع تاني:
-```js
-let javaScriptIsFun = true;
-console.log(typeof javaScriptIsFun); // boolean
+- مش بقول نوع الـ data وأنا بعمل variable. JS بتحدده لوحدها.
+- **الـ value هي اللي ليها type، مش الـ variable.** الـ variable بيخزّن values ليها types.
+- أقدر أحط في نفس الـ variable value من نوع تاني، يعني x يبقى number وبعدين string.
+- ده مفيد، بس ممكن يعمل bugs صعب ألاقيها.
 
-javaScriptIsFun = 'YES!';            // من غير let
-console.log(typeof javaScriptIsFun); // string
+### Comments
+```js
+// Variable name conventions  ← single line comment
+// console.log(40 + 8 + 23 - 10);  ← عطّلت الكود من غير ما أمسحه
+
+/*
+multi
+line comment
+*/
+```
+- JS بتتجاهل أي comment.
+- بستخدمها أوصف الكود أو أقسّمه sections، أو أعطّل كود من غير ما أمسحه.
+- **Cmd/Ctrl + /** بيعمل comment ويشيله.
+- جوناس من هنا ورايح هيقفل كود كل محاضرة فاتت جوه multi-line comment عشان يفضل reference.
+
+### Boolean في الكود
+```js
+let javascriptIsFun = true;
+console.log(javascriptIsFun); // true
+```
+- في الـ console الـ boolean بيطلع بلون مختلف عن الـ string (الـ string أبيض).
+- الـ declaration لازم ييجي **قبل** الـ log، لأن JS بتتنفذ من فوق لتحت.
+
+### `typeof`
+- operator زي `+` و`-`، وبيرجّع **string** فيها نوع الـ value.
+```js
+console.log(typeof true);            // boolean
+console.log(typeof javascriptIsFun); // boolean
+console.log(typeof 23);              // number
+console.log(typeof 'Jonas');         // string
 ```
 
-### undefined: القيمة والنوع واحد
+### الـ String لازم quotes
+```js
+"Jonas"  // ✅
+'Jonas'  // ✅
+"Jonas'  // ❌ لازم نفس النوع في الأول والآخر
+Jonas    // ❌ ReferenceError: Jonas is not defined
+```
+- من غير quotes JS بتدوّر على variable اسمه Jonas، ومش موجود.
+
+### Dynamic typing في الكود
+```js
+let javascriptIsFun = true;
+console.log(typeof javascriptIsFun); // boolean
+
+javascriptIsFun = 'YES!'; // من غير let
+console.log(typeof javascriptIsFun); // string
+```
+- أول مرة بعمل الـ variable بـ `let`. لما أغيّر القيمة أكتب الاسم و`=` من غير `let`.
+- تشبيه الصندوق: شلت الكتاب من الصندوق وحطيت تليفون.
+
+### Undefined
 ```js
 let year;
 console.log(year);        // undefined
@@ -54,18 +85,33 @@ console.log(typeof year); // undefined
 year = 1991;
 console.log(typeof year); // number
 ```
+- **undefined هي الـ value وهي الـ type في نفس الوقت.**
 
-### Comments
+### Bug الـ `typeof null`
 ```js
-// سطر واحد
-/* أكتر
-   من سطر */
-// console.log(x);  ← أوقف كود مؤقتًا من غير ما أمسحه
+console.log(typeof null); // object 🤦
 ```
-اختصار: `Cmd + /` على الماك.
+- المفروض يرجّع null زي ما `typeof undefined` بترجّع undefined.
+- ده bug في JS، ومش هيتصلح عشان legacy reasons. هنرجعله بعدين.
+
+## الفرق بين…
+| undefined | null |
+|---|---|
+| variable اتعمل من غير قيمة | empty value برضه |
+| `typeof` ← 'undefined' | `typeof` ← 'object' (bug) |
+
+| أول مرة | تغيير القيمة |
+|---|---|
+| `let x = 1;` | `x = 2;` من غير let |
+
+## غلطات لازم أخلي بالي منها
+- أنسى الـ quotes على الـ string فيطلع ReferenceError. جوناس بيقول دي غلطة المبتدئين كل يوم.
+- أكتب `let` تاني وأنا بغيّر قيمة variable موجود.
+- أستخدم الـ variable قبل ما أعمله (الكود بيتنفذ من فوق لتحت).
+- أصدّق `typeof null` إنه object.
 
 ## ملحوظات لنفسي
-- `console.log(Jonas)` من غير quotes → ReferenceError، JS فاكراه اسم متغير.
-- `true` و `false` small letters بس، `True` غلط.
-- undefined = لسه مفيش قيمة (JS حاطاها)، null = فاضي عن قصد (أنا حاطه).
-- `'100'` غير `100`، لو مش متأكد اعمل `typeof`.
+- كنت فاكر إن الـ variable هو اللي ليه type، وطلع **الـ value**.
+- كل الأرقام Number، مفيش int وfloat منفصلين.
+- `typeof` بترجّع string، يعني `'number'` مش number.
+- Cmd + / للـ comments، هستخدمه كتير.
