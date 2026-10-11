@@ -202,7 +202,7 @@
     app.innerHTML = `
       <section class="hero">
         <h1>أهلًا يا إسلام 👋</h1>
-        <p class="muted">كورس جوناس JavaScript — كل محاضرة فيها النوتات والشرح والتدريبات، والخطة بتاعتك جنبها.</p>
+        <p class="muted">كورس جوناس JavaScript — كل محاضرة فيها النوتات (وبعضها فيه شرح وتدريبات)، والخطة بتاعتك جنبها.</p>
         <div class="stats">
           <div class="stat"><b>${done}/${total}</b><span>محاضرات Section 9</span>${progressBar(done, total)}</div>
           <div class="stat"><b>${exTotalDone}/${exTotalAll}</b><span>تمارين خلصتها</span>${progressBar(exTotalDone, exTotalAll)}</div>
@@ -264,11 +264,11 @@
           ${upcoming
             .map(
               (l) =>
-                `<li><span class="num">${l.n}</span> ${esc(l.title)} ${l.challenge ? '<span class="pill">Challenge</span>' : ''}</li>`
+                `<li><span class="num">${l.n}</span> ${l.slug ? `<a href="#/lecture/${l.n}">${esc(l.title)}</a>` : esc(l.title)} ${l.challenge ? '<span class="pill">Challenge</span>' : ''}</li>`
             )
             .join('') || '<li>مفيش، كله خلص 🎉</li>'}
         </ul>
-        <p class="muted small">النوتات والتدريبات بتاعة كل محاضرة بتتضاف هنا بعد ما تخلصها وتبعت الترانسكريبت.</p>
+        <p class="muted small">نوتات Section 9 كلها موجودة (108–132). الشرح والتدريبات بيتضافوا بعد ما تخلص المحاضرة.</p>
       </div>
     `;
   }
